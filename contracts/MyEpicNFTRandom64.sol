@@ -15,16 +15,88 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    // Variables for the ERC721 contract
+    uint256 public tokenCounter;
 
     // base SVG code that will be stored as a variable
-    string baseSvg = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinyMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black' /><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
+    string baseSvg1 = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinyMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='";
+    string baseSvg2 = "' /><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
 
-    // Arrays of Words that will be combined separately
-    string[] firstWords = ["Unbelievable", "Untameable", "Unbearable", "Domesticated", "Lubricated", "Guillable", "Hilarious", "Hideous", "Captivated", "Capsized", "Pompous", "Vulnerable", "Credulous", "Excited", "Submisive"];
-    string[] secondWords = ["Sausage", "Bear", "Milkmaid", "Aubergine", "Nurse","Egg", "Plumber", "Secretary", "Firefighter", "Mosquito", "Coconut", "Mango", "Welder", "Carpenter", "Housemaid"];
-    string[] thirdWords = ["Maker", "Taker", "Shaver", "Distributor", "Salesman", "Caretaker", "Avenger", "Freezer", "Protector", "Polisher", "Picker", "Depilator", "Cleaner", "Watcher", "Player"];
+// Arrays of Words that will be combined separately
+    string[] firstWords = [
+        "Unbelievable",
+        "Untameable",
+        "Unbearable",
+        "Domesticated",
+        "Lubricated",
+        "Guillable",
+        "Hilarious",
+        "Hideous",
+        "Captivated",
+        "Capsized",
+        "Pompous",
+        "Vulnerable",
+        "Credulous",
+        "Excited",
+        "Submisive"
+        ];
+    string[] secondWords = [
+        "Sausage",
+        "Bear",
+        "Milkmaid",
+        "Aubergine",
+        "Nurse",
+        "Egg",
+        "Plumber",
+        "Secretary",
+        "Firefighter",
+        "Mosquito",
+        "Coconut",
+        "Mango",
+        "Welder",
+        "Carpenter",
+        "Housemaid"
+        ];
+    string[] thirdWords = [
+        "Maker",
+        "Taker",
+        "Shaver",
+        "Distribuitor",
+        "Salesman",
+        "Caretaker",
+        "Avenger",
+        "Freezer",
+        "Protector",
+        "Polisher",
+        "Picker",
+        "Depilator",
+        "Cleaner",
+        "Watcher",
+        "Player"
+        ];
+    string[] background = [
+        "aqua",
+        "bisque",
+        "black",
+        "blueviolet",
+        "burlywood",
+        "coral",
+        "cornflowerblue",
+        "dimgray",
+        "fuchsia",
+        "hotpink",
+        "lightblue",
+        "lightcoral",
+        "lightsteelblue",
+        "orchid",
+        "palevioletred"
+    ];    
+
+    event NewEpicNFTMinted(address sender, uint256 tokenId);
+    event CreatedEpicSVG(uint256 indexed tokenId, string tokenURI);
 
     constructor() ERC721 ("SquareNFT", "SQUARE") {
+        tokenCounter = 0;
         console.log("This is my NFT contract. Kaboom64!");
     }
 
@@ -37,16 +109,22 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
         return firstWords[rand];
     }
 
-       function pickRandomSecondWord(uint256 tokenId) public view returns (string memory) {
+    function pickRandomSecondWord(uint256 tokenId) public view returns (string memory) {
         uint256 rand = random(string(abi.encodePacked("SECOND_WORD", Strings.toString(tokenId))));
         rand = rand % secondWords.length;
         return secondWords[rand];
     }
 
-        function pickRandomThirdWord(uint256 tokenId) public view returns (string memory) {
+    function pickRandomThirdWord(uint256 tokenId) public view returns (string memory) {
         uint256 rand = random(string(abi.encodePacked("THIRD_WORD", Strings.toString(tokenId))));
         rand = rand % thirdWords.length;
         return thirdWords[rand];
+    }
+
+    function pickRandomBackground(uint256 tokenId) public view returns (string memory) {
+        uint256 rand = random(string(abi.encodePacked("BACKGROUND", Strings.toString(tokenId))));
+        rand = rand % background.length;
+        return background[rand];
     }
 
     function random(string memory input) internal pure returns (uint256) {
@@ -55,17 +133,20 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
 
     function makeAnEpicNFT() public {
         uint256 newItemId = _tokenIds.current();
+        tokenCounter = tokenCounter + 1;
 
         //Grab randomly a words from each array
         string memory first = pickRandomFirstWord(newItemId);
         string memory second = pickRandomSecondWord(newItemId);
         string memory third = pickRandomThirdWord(newItemId);
+        string memory backgroundColor = pickRandomBackground(newItemId);
+
 
         // Combine all randomly picked words to use them later in the metadata json
         string memory combinedWord = string(abi.encodePacked(first, second, third));
 
         // concatenate all words together and close SVG tags </text> and </svg>
-        string memory finalSvg = string(abi.encodePacked(baseSvg, combinedWord, "</text></svg>"));
+        string memory finalSvg = string(abi.encodePacked(baseSvg1, backgroundColor, baseSvg2, combinedWord, "</text></svg>"));
         
         // Below is snippet specific for Base64 encoding
         // Next create the json metadata
@@ -73,10 +154,11 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"name": "',
                         // Set the title as the NFT generator word
-                        combinedWord,
-                        '", "description": "A highly acclaimed collection of squares.", "image": "data:image/svg+xml;base64,',
+                        '{"name": "',combinedWord,'",',
+                        '"description": "A colourful collection of squares.",',
+                        '"attributes": "',backgroundColor,'",',
+                        '"image": "data:image/svg+xml;base64,',
                         // Now add the data image prefixe and append the SVG in base64
                         Base64.encode(bytes(finalSvg)),
                         '"}'
@@ -98,10 +180,14 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
         _safeMint(msg.sender, newItemId);
 
         // tokenURI to be set later on
-        _setTokenURI(newItemId, "blah");
+        _setTokenURI(newItemId, finalTokenUri);
 
         _tokenIds.increment();
         console.log("an NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
+        
+        emit NewEpicNFTMinted(msg.sender, newItemId);
+        emit CreatedEpicSVG(newItemId, finalTokenUri);
+
         }
 
 }
