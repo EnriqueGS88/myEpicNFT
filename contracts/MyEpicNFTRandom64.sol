@@ -38,7 +38,12 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
         "Vulnerable",
         "Credulous",
         "Excited",
-        "Submisive"
+        "Submisive",
+        "Neurotic",
+        "Hysterical",
+        "Pompous",
+        "Farcical",
+        "Emblematic"
         ];
     string[] secondWords = [
         "Sausage",
@@ -55,7 +60,12 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
         "Mango",
         "Welder",
         "Carpenter",
-        "Housemaid"
+        "Housemaid",
+        "Horse",
+        "Schoolgirl",
+        "Skirt",
+        "Lumberjack",
+        "Sweage"
         ];
     string[] thirdWords = [
         "Maker",
@@ -72,7 +82,12 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
         "Depilator",
         "Cleaner",
         "Watcher",
-        "Player"
+        "Player",
+        "Plower",
+        "Licker",
+        "Spanker",
+        "Trainer",
+        "Analyst"
         ];
     string[] background = [
         "aqua",
@@ -95,7 +110,7 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
     event NewEpicNFTMinted(address sender, uint256 tokenId);
     event CreatedEpicSVG(uint256 indexed tokenId, string tokenURI);
 
-    constructor() ERC721 ("SquareNFT", "SQUARE") {
+    constructor() ERC721 ("Epitaphs Generator", "EPITS") {
         tokenCounter = 0;
         console.log("This is my NFT contract. Kaboom64!");
     }
