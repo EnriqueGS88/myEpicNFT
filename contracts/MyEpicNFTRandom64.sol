@@ -175,7 +175,11 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
                         // Set the title as the NFT generator word
                         '{"name": "',combinedWord,'",',
                         '"description": "A colourful collection of squares.",',
-                        '"attributes": "',backgroundColor,'",',
+                        '"attributes": [',
+                        '{"trait_type":"Clan","value":"',backgroundColor,'"},',
+                        '{"trait_type":"Work","value":"',third,'"},',
+                        '{"trait_type":"Virtue","value":"',first,'"}',
+                        '],',
                         '"image": "data:image/svg+xml;base64,',
                         // Now add the data image prefixe and append the SVG in base64
                         Base64.encode(bytes(finalSvg)),
