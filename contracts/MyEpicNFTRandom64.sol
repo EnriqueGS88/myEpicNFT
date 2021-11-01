@@ -17,6 +17,7 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
 
     // Variables for the ERC721 contract
     uint256 public tokenCounter;
+    uint256 public tokenSupply;
 
     // base SVG code that will be stored as a variable
     string baseSvg1 = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinyMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='";
@@ -112,6 +113,7 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
 
     constructor() ERC721 ("Epitaphs Generator", "EPITS") {
         tokenCounter = 0;
+        tokenSupply = 999;
         console.log("This is my NFT contract. Kaboom64!");
     }
 
@@ -147,6 +149,7 @@ contract MyEpicNFTRandom64 is ERC721URIStorage {
     }
 
     function makeAnEpicNFT() public {
+        require( tokenCounter < tokenSupply, "All tokens have already been minted" );
         uint256 newItemId = _tokenIds.current();
         tokenCounter = tokenCounter + 1;
 
